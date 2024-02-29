@@ -1,0 +1,34 @@
+#Telnet session for ip address configuation on a Cisco router
+
+#!/usr/bin/env python  
+
+import getpass
+import sys
+import telnetlib
+
+#Telnet login information 
+
+HOST = "Enter ip address here"
+user = input("Enter your username here")
+password = getpass.getpass()
+
+tn = telnetlib.Telnet(HOST)
+
+tn.read_until(b"login: ")
+tn.write(user.encode('ascii') + b"\n")
+if password:
+    tn.read_until(b"Password: ")
+    tn.write(password.encode('ascii') + b"\n")
+
+# Commands sent to the switch
+
+tn.write(b"en\n")
+tn.write(b"enter enable password")
+tn.write(b"Conf t\n")
+tn.write(b"Int f0/1\n")
+tn.write(b"ip add 10.10.10.2 255.255.255.0")
+tn.write(b"end\n")
+tn.write(b"write memory\n")
+tn.write(b"exit\n")
+
+print(tn.read_all())
