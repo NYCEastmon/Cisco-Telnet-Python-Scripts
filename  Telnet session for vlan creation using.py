@@ -1,0 +1,42 @@
+# Telnet session for vlan creation using loops.
+
+#!/usr/bin/env python  
+
+import getpass
+import sys
+import telnetlib
+
+# Telnet login information 
+
+username = input("Malcolm")
+password = getpass.getpass()
+
+#Loop for logging into muiltple switches. 
+
+for n in range(2,10):
+
+    HOST = "10.10.10." + str(n)
+    tn = telnetlib.Telnet(HOST)
+
+    tn.read_until("username: ")
+    tn.write(username + "\n")
+    if password:
+        tn.read_until("Password: ")
+        tn.write(password + "\n")
+
+# Commands sent to the switch.
+
+tn.write("en")
+tn.write("conf t")
+
+# Loop for vlan creation and naming.
+
+for n in range(2,10):
+    tn.write("vlan" + n + "\n")
+    tn.write("name Python" + n + "\n")
+    
+tn.write("end\n") 
+tn.write("wr")
+tn.write("exit\n")   
+
+print (tn.read_all())
